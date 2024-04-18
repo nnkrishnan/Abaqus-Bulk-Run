@@ -1,0 +1,2 @@
+# ignore all abaqus input files
+*.inp
