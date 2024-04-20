@@ -1,6 +1,5 @@
 @echo off
 
-echo  ----------  ---------- Starting Script ----------  ---------- 
 setlocal enabledelayedexpansion
 
 @REM Define path to abaqus executable.
@@ -58,14 +57,26 @@ for /L %%i in (1,1,%argCount%) do (
     )
     
 )
+@REM Check if there are any .inp files in the directory
+set "inp_files="
+for %%f in (*.inp) do (
+    if "%%~xf"==".inp" (
+        set "inp_files=1"
+    )
+)
+@REM If no .inp files found, exit the script
+if not defined inp_files (
+    echo No .inp files found in the current directory. Exiting!...
+    goto :exit_script
+)
 set "tab=    "
-echo The following input files will be processed:
+echo The following .inp files were found in the current directory
 for %%f in (*.inp) do (
     if "%%~xf"==".inp" (
     echo  !tab! %%~nf
     )
     )
-set /p "choice=Would you like to continue? (Y/N): "
+set /p "choice=Do you want to continue? (y/n) "
 if /i "%choice%"=="N" (  goto :exit_script )
 if /i not "%choice%"=="Y" ( goto :exit_script)
 for %%f in (*.inp) do (
@@ -95,17 +106,16 @@ for %%f in (*.inp) do (
         if not "!userSubroutine!"=="" (
             set abaqus_cmd=!abaqus_cmd! user="!userSubroutine!"
         )
-        echo Executing the following commad
-        echo !abaqus_cmd!
+        echo Starting abaqus for !job_name!
+        @REM echo !abaqus_cmd!
 
         @REM Runs the prepared abaqus commad
         call  !abaqus_cmd!
 
+        echo Finished running abaqus for !job_name!
 	)
 )
 
 :exit_script
-
-echo ----------  ---------- Done Executing Script ----------  ----------
-
+echo Done Executing Script
 exit 0

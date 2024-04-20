@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Set the path to ABQLauncher
-abaqus_path="/home/abaqus/SIMULIA/CAE/2018/linux_a64/code/bin/ABQLauncher"
-
+# abaqus_path="/home/abaqus/SIMULIA/CAE/2018/linux_a64/code/bin/ABQLauncher"
+abaqus_path=abaqus.bat
 
 # Function to print a fancy border with a message inside a rectangle
 print_border() {
