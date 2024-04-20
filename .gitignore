@@ -10,3 +10,10 @@
 *.bak
 *.odb
 *.prt
+*.SMABulk
+*.023
+*.lck
+*.mdl
+*.simlog
+*.SMAFocus
+*.simdir
