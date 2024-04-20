@@ -84,8 +84,9 @@ if not "%userSubroutine%"=="" (
 )
 echo Executing the following commad
 echo %abaqus_cmd%
+
 @REM Runs the prepared abaqus commad
- %abaqus_cmd%
-echo "\n"
+call  %abaqus_cmd%
+
 echo Done Executing Script
 @REM exit 0
