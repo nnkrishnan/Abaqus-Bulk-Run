@@ -2,7 +2,14 @@
 
 # Set the path to ABQLauncher
 # abaqus_path="/home/abaqus/SIMULIA/CAE/2018/linux_a64/code/bin/ABQLauncher"
-abaqus_path=abaqus.bat
+
+# Defaults 
+abaqus_path="abaqus.bat"
+numCPUs=2
+numGPUs=0
+interactiveFlag=true
+userSubroutine=""
+delete_files=true
 
 # Function to print a fancy border with a message inside a rectangle
 print_border() {
@@ -18,6 +25,43 @@ print_border() {
     echo ""
 }
 
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        gpus=*)
+            numGPUs="${1#*=}"
+            shift
+            ;;
+        cpus=*)
+            numCPUs="${1#*=}"
+            shift
+            ;;
+        int)
+            interactiveFlag=true
+            shift
+            ;;
+        ask_delete=*)
+            askDeleteValue="${1#*=}"
+        if [[ "$askDeleteValue" == 'OFF' ]]; then
+            delete_files=true
+        elif [[ "$askDeleteValue" == 'ON' ]]; then
+            delete_files=false
+        else
+            echo "Invalid argument for ask_delete. Exiting"
+            exit 1
+        fi
+            shift
+            ;;
+        user=*)
+            userSubroutine="${1#*=}"
+            shift
+            ;;
+        *)
+            echo "Unknown argument: $1"
+            exit 1
+            ;;
+    esac
+done
 
 
 # Get the list of .inp files in the current directory
@@ -48,9 +92,31 @@ do
 
     # Remove file extension from filename
     basename="${filename%.*}"
+    abaqus_cmd="$abaqus_path job=$basename cpus=$numCPUs"
+
+        #  Check if GPUs are to be included
+        if [[  $numGPUs > 0 ]]; then
+            abaqus_cmd="$abaqus_cmd gpus=$numGPUs"
+        fi
+
+        #  Check if interactive mode is enabled
+        if [[  $interactiveFlag ]] ; then
+            abaqus_cmd="$abaqus_cmd int"
+        fi
+
+        # Check if ask_delete is OFF mode is enabled
+        if [[  $delete_files ]] ; then
+            abaqus_cmd="$abaqus_cmd ask_delete=OFF"
+        fi
+
+        #  Check if user subroutine is provided
+        if [[   "$userSubroutine"  ]] ; then
+             abaqus_cmd="$abaqus_cmd user=$userSubroutine"
+        fi
     
     # Run the command for the current filename and wait for it to finish
-    "$abaqus_path" job="$basename" int cpus=64
+    # echo  "$abaqus_cmd"
+    eval  "$abaqus_cmd"
     
     # Display a fancy border with a message after the job finishes
     print_border "Finished running abaqus for $filename"
