@@ -1,10 +1,9 @@
 #!/bin/bash
 
 # Set the path to ABQLauncher
-# abaqus_path="/home/abaqus/SIMULIA/CAE/2018/linux_a64/code/bin/ABQLauncher"
 
 # Defaults 
-abaqus_path="abaqus.bat"
+abaqus_path="/home/abaqus/SIMULIA/CAE/2018/linux_a64/code/bin/ABQLauncher"
 numCPUs=2
 numGPUs=0
 interactiveFlag=true
@@ -95,7 +94,7 @@ do
     abaqus_cmd="$abaqus_path job=$basename cpus=$numCPUs"
 
         #  Check if GPUs are to be included
-        if [[  $numGPUs > 0 ]]; then
+        if [[  $numGPUs -gt 0 ]]; then
             abaqus_cmd="$abaqus_cmd gpus=$numGPUs"
         fi
 
